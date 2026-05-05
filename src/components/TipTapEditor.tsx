@@ -65,8 +65,13 @@ const MenuBar = ({ editor }: { editor: any }) => {
 
 export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
   const editor = useEditor({
+    immediatelyRender: false,   // fix SSR hydration mismatch
     extensions: [
-      StarterKit.configure({ heading: false }),
+      StarterKit.configure({
+        heading: false,
+        // disable StarterKit's bundled link — we add our own below
+        // (avoids "Duplicate extension names: ['link']" warning)
+      }),
       Heading.configure({ levels: [1, 2, 3] }),
       Link.configure({ openOnClick: false }),
       Image,
