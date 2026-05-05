@@ -1,98 +1,103 @@
-# Inkwell — SEO-Optimised Content Publishing Platform
+# Inkwell Content Publishing Platform
 
-Inkwell is a lightweight, SEO-first content publishing platform with built-in AI meta generation, dynamic routing, and high Lighthouse performance out-of-the-box. Built with Next.js 14 (App Router), Prisma, PostgreSQL, and Tailwind CSS.
+Inkwell is a high-performance, SEO-optimized content management system and publishing platform. Designed for long-form editorial content, it features built-in artificial intelligence assistance for meta generation, robust dynamic routing, and an intuitive administration dashboard. The architecture prioritizes read-performance, semantic HTML, and accessibility.
 
-## Features
+## Key Features
 
-- **Blazing Fast**: Incremental Static Regeneration (ISR) ensures high Lighthouse performance.
-- **Built-in SEO**: Auto-generated Meta tags, canonical URLs, JSON-LD schema, and dynamically generated Sitemap and RSS feeds.
-- **AI-Powered**: One-click generation of Meta Descriptions and SEO-friendly slugs using Groq AI.
-- **Rich Text Editing**: Clean TipTap editor supporting headings, lists, quotes, and images.
-- **Content Dashboard**: Simple admin panel to track published, drafted, and total articles.
+*   **High Performance Content Delivery**: Utilizes Next.js App Router with Incremental Static Regeneration (ISR) to ensure near-instantaneous page loads and optimal Core Web Vitals.
+*   **Integrated SEO Automation**: Automatically generates canonical URLs, structured JSON-LD schema, sitemaps, and RSS feeds.
+*   **AI-Assisted Publishing**: Incorporates Groq AI to automatically synthesize optimal meta descriptions and SEO-friendly URL slugs based on article content.
+*   **Professional Editorial Interface**: Features a custom-configured TipTap rich text editor that supports precise formatting, blockquotes, heading hierarchies, and embedded media.
+*   **Comprehensive Administration**: Provides a secure dashboard to manage the complete publication lifecycle, track drafts, and organize categories.
+*   **Modern Design System**: Implements a highly polished, responsive aesthetic using CSS variables and Tailwind CSS, featuring smooth transitions, glassmorphism effects, and rigorous typography scaling.
 
----
+## Technical Architecture
 
-## Architecture / Tech Stack
-
-- **Framework**: Next.js 14.x (App Router)
-- **Database ORM**: Prisma
-- **Database Engine**: PostgreSQL (Neon, Supabase, or local)
-- **Authentication**: NextAuth.js (Credentials Provider)
-- **Styling**: Tailwind CSS + Custom Design System
-- **Validation**: Zod
-- **Editor**: TipTap
-
----
+*   **Core Framework**: Next.js 16.x (App Router)
+*   **Language**: TypeScript
+*   **Database Engine**: PostgreSQL
+*   **ORM**: Prisma
+*   **Authentication**: NextAuth.js (Credentials Provider)
+*   **Styling**: Tailwind CSS, PostCSS, Custom CSS Variables
+*   **Content Editor**: TipTap
+*   **AI Integration**: Groq SDK / Anthropic SDK
+*   **Validation**: Zod
 
 ## Local Setup Instructions
 
 ### 1. Prerequisites
 
-Ensure you have the following installed:
-- Node.js (v18+)
-- PostgreSQL database (or an empty Neon / Supabase project)
-- A Groq API Key (for the Groq AI features)
+Ensure the following dependencies are installed on your local development environment:
+*   Node.js (v18.x or newer)
+*   npm or yarn
+*   A running PostgreSQL instance (or cloud provider such as Neon/Supabase)
+*   A Groq API Key (required for AI meta generation)
 
-### 2. Clone and Install Dependencies
+### 2. Installation
+
+Clone the repository and install the required Node modules:
 
 ```bash
-git clone <your-repo-url>
+git clone <repository-url>
 cd inkwell
 npm install
 ```
 
-### 3. Environment Variables
+### 3. Environment Configuration
 
-Create a `.env` file in the root of the project (you can copy from `.env.example`) and fill in your values:
+Copy the example environment template and configure your local variables.
+
+```bash
+cp .env.example .env
+```
+
+Ensure the following variables are correctly defined in your `.env` file:
 
 ```env
-DATABASE_URL="postgresql://user:password@localhost:5432/inkwell?schema=public"
-NEXTAUTH_SECRET="your-random-secret-key-for-jwt"
+DATABASE_URL="postgresql://user:password@localhost:5432/inkwell?schema=public&pgbouncer=true&connect_timeout=15"
+DIRECT_URL="postgresql://user:password@localhost:5432/inkwell?schema=public"
+NEXTAUTH_SECRET="your-secure-random-jwt-secret"
 NEXTAUTH_URL="http://localhost:3000"
 GROQ_API_KEY="your-groq-api-key"
 ```
 
-### 4. Database Initialization & Seeding
+*Note: If using a connection pooler like PgBouncer (common with Neon), ensure you utilize both DATABASE_URL for runtime queries and DIRECT_URL for Prisma migrations.*
 
-Sync your Prisma schema with the database and seed the initial admin account:
+### 4. Database Initialization and Seeding
+
+Generate the Prisma client, push the schema to your database, and execute the seed script to populate initial data and the administrator account:
 
 ```bash
-# Push the schema to your PostgreSQL database
-npx prisma db push
-
-# Generate the Prisma client
 npx prisma generate
-
-# Seed the initial admin account, categories, and author profile
+npx prisma db push
 npx prisma db seed
 ```
 
-**Default Admin Login**
-- Email: `admin@example.com`
-- Password: `password123`
+**Default Administrator Credentials (from seed):**
+*   Email: `admin@inkwell.dev`
+*   Password: `admin1234`
 
-### 5. Start the Development Server
+### 5. Running the Application
+
+Start the local development server:
 
 ```bash
 npm run dev
 ```
 
-Visit `http://localhost:3000` for the public site.
-Visit `http://localhost:3000/admin/login` for the admin dashboard.
+*   **Public Interface**: `http://localhost:3000`
+*   **Administration Panel**: `http://localhost:3000/admin`
 
----
+## Deployment Guidelines
 
-## Deployment (Vercel)
+Inkwell is optimized for deployment on Vercel or similar Edge/Serverless platforms.
 
-1. Push your code to a GitHub repository.
-2. Import the project into Vercel.
-3. In the Vercel dashboard, add the following Environment Variables:
-   - `DATABASE_URL`
-   - `NEXTAUTH_SECRET`
-   - `NEXTAUTH_URL` (Set to your production domain)
-   - `GROQ_API_KEY`
-4. Deploy!
-5. After deployment, make sure to run the seed script on your production database (or migrate it) if you haven't already.
+1.  Push the repository to GitHub, GitLab, or Bitbucket.
+2.  Import the project into your hosting provider dashboard (e.g., Vercel).
+3.  Configure the required environment variables (`DATABASE_URL`, `DIRECT_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `GROQ_API_KEY`).
+4.  Initiate the deployment process.
+5.  Post-deployment, ensure you execute `npx prisma db push` or `npx prisma migrate deploy` against your production database, followed by the seed script if it is a fresh environment.
 
-**Note on Background Processes:**
-The sitemap is generated automatically post-build via `next-sitemap`. Images are mocked locally for now, but you should hook up a Vercel Blob or AWS S3 bucket for production file uploads by replacing the logic in `src/app/api/upload/route.ts`.
+## License
+
+Copyright 2026. All rights reserved.
