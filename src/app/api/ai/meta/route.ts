@@ -39,10 +39,10 @@ Return the response in the following JSON format ONLY, nothing else:
 
     const text = response.choices[0]?.message?.content || ''
     
-    let result = null
+    let result: { metaDescription?: string; slug?: string } | null = null
     const jsonMatch = text.match(/\{[\s\S]*\}/)
     if (jsonMatch) {
-        result = JSON.parse(jsonMatch[0])
+        result = JSON.parse(jsonMatch[0]) as { metaDescription?: string; slug?: string }
     }
 
     if (result && result.metaDescription) {
