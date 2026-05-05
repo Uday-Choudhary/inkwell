@@ -42,7 +42,11 @@ Return the response in the following JSON format ONLY, nothing else:
     let result: { metaDescription?: string; slug?: string } | null = null
     const jsonMatch = text.match(/\{[\s\S]*\}/)
     if (jsonMatch) {
+      try {
         result = JSON.parse(jsonMatch[0]) as { metaDescription?: string; slug?: string }
+      } catch (e) {
+        console.error('Failed to parse JSON:', jsonMatch[0])
+      }
     }
 
     if (result && result.metaDescription) {

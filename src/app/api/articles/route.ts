@@ -43,9 +43,16 @@ export async function POST(request: NextRequest) {
   const readingTime = calculateReadingTime(data.content)
   const excerpt = data.excerpt || extractExcerpt(data.content)
 
+  // Find the actual Author record linked to the logged-in User's email
+  const author = await prisma.author.findUnique({
+    where: { email: session.user?.email as string }
+  })
+  if (!author) return NextResponse.json({ error: 'Author profile not found for this user' }, { status: 400 })
+
   const article = await prisma.article.create({
     data: {
       ...data,
+      authorId: author.id,
       slug,
       excerpt,
       readingTimeMinutes: readingTime,
