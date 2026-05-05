@@ -58,11 +58,11 @@ export default function ArticleEditor({ initialData, isEdit }: ArticleEditorProp
         router.push('/admin/articles')
         router.refresh()
       } else {
-        const errorData = await res.json()
-        toast({ type: 'error', message: errorData.error || 'Failed to save' })
+        const errorData = await res.json().catch(() => ({}))
+        toast({ type: 'error', message: errorData.error || `Server error (${res.status})` })
       }
-    } catch (err) {
-      toast({ type: 'error', message: 'Network error' })
+    } catch (err: any) {
+      toast({ type: 'error', message: err?.message || 'Network error' })
     } finally {
       setIsSaving(false)
     }

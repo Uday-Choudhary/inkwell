@@ -26,39 +26,51 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const session = await auth()
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  try {
+    const session = await auth()
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const body = await request.json()
-  const parsed = ArticleCreateSchema.safeParse(body)
-  if (!parsed.success) return NextResponse.json({ error: 'Validation error', details: parsed.error.issues }, { status: 422 })
+    const userEmail = session.user?.email
+    if (!userEmail) {
+      console.error('POST /api/articles: session has no email', JSON.stringify(session))
+      return NextResponse.json({ error: 'Session email missing — please log out and log in again' }, { status: 400 })
+    }
 
-  const data = parsed.data
+    const body = await request.json()
+    const parsed = ArticleCreateSchema.safeParse(body)
+    if (!parsed.success) return NextResponse.json({ error: 'Validation error', details: parsed.error.issues }, { status: 422 })
 
-  // Ensure slug uniqueness
-  let slug = data.slug || generateSlug(data.title)
-  const existing = await prisma.article.findUnique({ where: { slug } })
-  if (existing) slug = `${slug}-${Date.now()}`
+    const data = parsed.data
 
-  const readingTime = calculateReadingTime(data.content)
-  const excerpt = data.excerpt || extractExcerpt(data.content)
+    // Ensure slug uniqueness
+    let slug = data.slug || generateSlug(data.title)
+    const existing = await prisma.article.findUnique({ where: { slug } })
+    if (existing) slug = `${slug}-${Date.now()}`
 
-  // Find the actual Author record linked to the logged-in User's email
-  const author = await prisma.author.findUnique({
-    where: { email: session.user?.email as string }
-  })
-  if (!author) return NextResponse.json({ error: 'Author profile not found for this user' }, { status: 400 })
+    const readingTime = calculateReadingTime(data.content)
+    const excerpt = data.excerpt || extractExcerpt(data.content)
 
-  const article = await prisma.article.create({
-    data: {
-      ...data,
-      authorId: author.id,
-      slug,
-      excerpt,
-      readingTimeMinutes: readingTime,
-      publishedAt: data.published ? new Date() : null,
-    },
-  })
+    // Find Author linked to the logged-in user's email
+    const author = await prisma.author.findUnique({ where: { email: userEmail } })
+    if (!author) {
+      console.error(`POST /api/articles: no Author found for email "${userEmail}"`)
+      return NextResponse.json({ error: `No author profile for ${userEmail}. Please contact admin.` }, { status: 400 })
+    }
 
-  return NextResponse.json(article, { status: 201 })
+    const article = await prisma.article.create({
+      data: {
+        ...data,
+        authorId: author.id,
+        slug,
+        excerpt,
+        readingTimeMinutes: readingTime,
+        publishedAt: data.published ? new Date() : null,
+      },
+    })
+
+    return NextResponse.json(article, { status: 201 })
+  } catch (error: any) {
+    console.error('POST /api/articles unexpected error:', error)
+    return NextResponse.json({ error: error?.message || 'Internal server error' }, { status: 500 })
+  }
 }

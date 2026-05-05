@@ -16,6 +16,7 @@ declare module 'next-auth/jwt' {
   interface JWT {
     role?: string
     id?: string
+    email?: string
   }
 }
 
@@ -60,6 +61,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.role = (user as any).role
         token.id = (user as any).id
+        token.email = (user as any).email  // persist email in JWT
       }
       return token
     },
@@ -67,6 +69,7 @@ export const authOptions: NextAuthOptions = {
       if (token && session.user) {
         session.user.role = token.role as string
         session.user.id = token.id as string
+        session.user.email = token.email as string  // restore from JWT
       }
       return session
     },
