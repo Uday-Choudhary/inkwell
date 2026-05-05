@@ -27,6 +27,10 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   const data = parsed.data
 
   let updates: any = { ...data }
+  // coerce empty strings → undefined so Prisma stores NULL (avoids FK violations)
+  if ('categoryId' in updates) updates.categoryId = updates.categoryId || undefined
+  if ('coverImage' in updates) updates.coverImage = updates.coverImage || undefined
+  if ('ogImage' in updates) updates.ogImage = updates.ogImage || undefined
   if (data.content) {
     updates.readingTimeMinutes = calculateReadingTime(data.content)
     updates.excerpt = data.excerpt || extractExcerpt(data.content)

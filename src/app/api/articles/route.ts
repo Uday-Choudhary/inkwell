@@ -61,6 +61,10 @@ export async function POST(request: NextRequest) {
       data: {
         ...data,
         authorId: author.id,
+        // coerce empty strings → undefined so Prisma stores NULL
+        categoryId: data.categoryId || undefined,
+        coverImage: data.coverImage || undefined,
+        ogImage: data.ogImage || undefined,
         slug,
         excerpt,
         readingTimeMinutes: readingTime,
