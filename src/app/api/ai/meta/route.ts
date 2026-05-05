@@ -33,7 +33,7 @@ Return the response in the following JSON format ONLY, nothing else:
 
   try {
     const response = await groq.chat.completions.create({
-      model: 'llama3-8b-8192',
+      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
       messages: [{ role: 'user', content: prompt }],
     })
 
