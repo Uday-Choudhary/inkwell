@@ -22,7 +22,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   const { id } = await params
   const body = await request.json()
   const parsed = ArticleUpdateSchema.safeParse(body)
-  if (!parsed.success) return NextResponse.json({ error: 'Validation error', details: parsed.error.errors }, { status: 422 })
+  if (!parsed.success) return NextResponse.json({ error: 'Validation error', details: parsed.error.issues }, { status: 422 })
 
   const data = parsed.data
 

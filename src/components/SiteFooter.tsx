@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { PenLine, Github, Twitter } from 'lucide-react'
+import { PenLine } from 'lucide-react'
 
 export default function SiteFooter() {
   return (
@@ -38,8 +38,6 @@ export default function SiteFooter() {
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <p style={{ fontSize: '0.8125rem' }}>© {new Date().getFullYear()} Inkwell. All rights reserved.</p>
           <div style={{ display: 'flex', gap: '1rem' }}>
-            <a href="https://github.com" className="footer-link" aria-label="GitHub"><Github size={18} /></a>
-            <a href="https://twitter.com" className="footer-link" aria-label="Twitter"><Twitter size={18} /></a>
           </div>
         </div>
       </div>

@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json()
   const parsed = AIMetaSchema.safeParse(body)
-  if (!parsed.success) return NextResponse.json({ error: 'Validation error', details: parsed.error.errors }, { status: 422 })
+  if (!parsed.success) return NextResponse.json({ error: 'Validation error', details: parsed.error.issues }, { status: 422 })
 
   const { title, excerpt } = parsed.data
 

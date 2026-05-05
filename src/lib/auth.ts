@@ -3,6 +3,15 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string
+      role: string
+    } & import('next-auth').DefaultSession['user']
+  }
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     CredentialsProvider({
