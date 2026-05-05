@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+
+export const dynamic = 'force-dynamic'
 import Image from 'next/image'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
@@ -12,8 +14,12 @@ import { Clock, Calendar } from 'lucide-react'
 interface Props { params: Promise<{ slug: string }> }
 
 export async function generateStaticParams() {
-  const articles = await prisma.article.findMany({ where: { published: true }, select: { slug: true } })
-  return articles.map((a) => ({ slug: a.slug }))
+  try {
+    const articles = await prisma.article.findMany({ where: { published: true }, select: { slug: true } })
+    return articles.map((a: { slug: string }) => ({ slug: a.slug }))
+  } catch {
+    return []
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

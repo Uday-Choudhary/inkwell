@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth'
+import { NextAuthOptions, getServerSession } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
@@ -12,7 +12,14 @@ declare module 'next-auth' {
   }
 }
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+declare module 'next-auth/jwt' {
+  interface JWT {
+    role?: string
+    id?: string
+  }
+}
+
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -51,15 +58,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as { role?: string }).role
+        token.role = (user as any).role
+        token.id = (user as any).id
       }
       return token
     },
     async session({ session, token }) {
-      if (token) {
+      if (token && session.user) {
         session.user.role = token.role as string
+        session.user.id = token.id as string
       }
       return session
     },
   },
-})
+}
+
+// Helper to get session in server components / API routes
+export function auth() {
+  return getServerSession(authOptions)
+}

@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
+
+export const dynamic = 'force-dynamic'
 import ArticleCard from '@/components/ArticleCard'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight, Rss } from 'lucide-react'

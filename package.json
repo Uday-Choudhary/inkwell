@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.93.0",
-    "@prisma/client": "^7.8.0",
+    "@prisma/client": "^5.22.0",
     "@tiptap/extension-blockquote": "^3.22.5",
     "@tiptap/extension-bold": "^3.22.5",
     "@tiptap/extension-bullet-list": "^3.22.5",
@@ -32,7 +32,7 @@
     "next": "16.2.4",
     "next-auth": "^4.24.14",
     "next-sitemap": "^4.2.3",
-    "prisma": "^7.8.0",
+    "prisma": "^5.22.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "rss": "^1.2.2",
