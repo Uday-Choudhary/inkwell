@@ -77,6 +77,8 @@ npx prisma db seed
 *   Email: `admin@inkwell.dev`
 *   Password: `admin1234`
 
+*Note: For convenience during development, the login page features a "Use Demo Admin Credentials" button that automatically populates these credentials.*
+
 ### 5. Running the Application
 
 Start the local development server:

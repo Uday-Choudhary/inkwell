@@ -84,6 +84,31 @@ export default function LoginForm() {
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
+
+        <button
+          type="button"
+          onClick={() => {
+            setEmail('admin@inkwell.dev')
+            setPassword('admin1234')
+          }}
+          style={{
+            width: '100%',
+            padding: '0.75rem',
+            background: '#f8fafc',
+            color: '#475569',
+            border: '1px solid #e2e8f0',
+            borderRadius: 8,
+            fontSize: '0.875rem',
+            fontWeight: 500,
+            cursor: 'pointer',
+            marginTop: '1rem',
+            transition: 'all 0.2s ease',
+          }}
+          onMouseOver={(e) => e.currentTarget.style.background = '#f1f5f9'}
+          onMouseOut={(e) => e.currentTarget.style.background = '#f8fafc'}
+        >
+          Use Demo Admin Credentials
+        </button>
       </div>
     </div>
   )
